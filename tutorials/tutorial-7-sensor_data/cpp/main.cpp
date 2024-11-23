@@ -18,53 +18,61 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
-
 #include <sl/Camera.hpp>
 
 using namespace std;
 using namespace sl;
 
 // Basic structure to compare timestamps of a sensor. Determines if a specific sensor data has been updated or not.
-struct TimestampHandler {
+struct TimestampHandler
+{
 
     // Compare the new timestamp to the last valid one. If it is higher, save it as new reference.
-    inline bool isNew(Timestamp& ts_curr, Timestamp& ts_ref) {
+    inline bool isNew(Timestamp &ts_curr, Timestamp &ts_ref)
+    {
         bool new_ = ts_curr > ts_ref;
-        if (new_) ts_ref = ts_curr;
+        if (new_)
+            ts_ref = ts_curr;
         return new_;
     }
     // Specific function for IMUData.
-    inline bool isNew(SensorsData::IMUData& imu_data) {
+    inline bool isNew(SensorsData::IMUData &imu_data)
+    {
         return isNew(imu_data.timestamp, ts_imu);
     }
     // Specific function for MagnetometerData.
-    inline bool isNew(SensorsData::MagnetometerData& mag_data) {
+    inline bool isNew(SensorsData::MagnetometerData &mag_data)
+    {
         return isNew(mag_data.timestamp, ts_mag);
     }
     // Specific function for BarometerData.
-    inline bool isNew(SensorsData::BarometerData& baro_data) {
+    inline bool isNew(SensorsData::BarometerData &baro_data)
+    {
         return isNew(baro_data.timestamp, ts_baro);
     }
 
     Timestamp ts_imu = 0, ts_baro = 0, ts_mag = 0; // Initial values
 };
 
-
 // Function to display sensor parameters.
-void printSensorConfiguration(SensorParameters& sensor_parameters) {
-    if (sensor_parameters.isAvailable) {
+void printSensorConfiguration(SensorParameters &sensor_parameters)
+{
+    if (sensor_parameters.isAvailable)
+    {
         cout << "*****************************" << endl;
         cout << "Sensor Type: " << sensor_parameters.type << endl;
-        cout << "Max Rate: "    << sensor_parameters.sampling_rate << SENSORS_UNIT::HERTZ << endl;
-        cout << "Range: ["      << sensor_parameters.range << "] " << sensor_parameters.sensor_unit << endl;
-        cout << "Resolution: "  << sensor_parameters.resolution << " " << sensor_parameters.sensor_unit << endl;
-        if (isfinite(sensor_parameters.noise_density)) cout << "Noise Density: " << sensor_parameters.noise_density <<" "<< sensor_parameters.sensor_unit<<"/√Hz"<<endl;
-        if (isfinite(sensor_parameters.random_walk)) cout << "Random Walk: " << sensor_parameters.random_walk <<" "<< sensor_parameters.sensor_unit<<"/s/√Hz"<<endl;
+        cout << "Max Rate: " << sensor_parameters.sampling_rate << SENSORS_UNIT::HERTZ << endl;
+        cout << "Range: [" << sensor_parameters.range << "] " << sensor_parameters.sensor_unit << endl;
+        cout << "Resolution: " << sensor_parameters.resolution << " " << sensor_parameters.sensor_unit << endl;
+        if (isfinite(sensor_parameters.noise_density))
+            cout << "Noise Density: " << sensor_parameters.noise_density << " " << sensor_parameters.sensor_unit << "/√Hz" << endl;
+        if (isfinite(sensor_parameters.random_walk))
+            cout << "Random Walk: " << sensor_parameters.random_walk << " " << sensor_parameters.sensor_unit << "/s/√Hz" << endl;
     }
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
     // Create a ZED camera object.
     Camera zed;
@@ -75,16 +83,19 @@ int main(int argc, char **argv) {
 
     // Open the camera.
     auto returned_state = zed.open(init_parameters);
-    if (returned_state != ERROR_CODE::SUCCESS) {
+    if (returned_state != ERROR_CODE::SUCCESS)
+    {
         cout << "Error " << returned_state << ", exit program.\n";
         return EXIT_FAILURE;
     }
 
     // Check camera model.
     auto info = zed.getCameraInformation();
-    MODEL cam_model =info.camera_model;
-    if (cam_model == MODEL::ZED) {
-        cout << "This tutorial only works with ZED 2 and ZED-M cameras. ZED does not have additional sensors.\n"<<endl;
+    MODEL cam_model = info.camera_model;
+    if (cam_model == MODEL::ZED)
+    {
+        cout << "This tutorial only works with ZED 2 and ZED-M cameras. ZED does not have additional sensors.\n"
+             << endl;
         return EXIT_FAILURE;
     }
 
@@ -111,16 +122,19 @@ int main(int argc, char **argv) {
     int count = 0;
     double elapse_time = 0;
 
-    while (elapse_time < 5000) {
+    while (elapse_time < 5000)
+    {
 
         // Depending on your camera model, different sensors are available.
         // They do not run at the same rate: therefore, to not miss any new samples we iterate as fast as possible
         // and compare timestamps to determine when a given sensor's data has been updated.
         // NOTE: There is no need to acquire images with grab(). getSensorsData runs in a separate internal capture thread.
-        if (zed.getSensorsData(sensors_data, TIME_REFERENCE::CURRENT) == ERROR_CODE::SUCCESS) {
+        if (zed.getSensorsData(sensors_data, TIME_REFERENCE::CURRENT) == ERROR_CODE::SUCCESS)
+        {
 
             // Check if a new IMU sample is available. IMU is the sensor with the highest update frequency.
-            if (ts.isNew(sensors_data.imu)) {
+            if (ts.isNew(sensors_data.imu))
+            {
                 cout << "Sample " << count++ << "\n";
                 cout << " - IMU:\n";
                 cout << " \t Orientation: {" << sensors_data.imu.pose.getOrientation() << "}\n";

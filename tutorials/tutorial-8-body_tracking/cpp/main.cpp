@@ -34,7 +34,9 @@
 using namespace std;
 using namespace sl;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
+    // step1：打开相机
     // Create ZED objects
     Camera zed;
     InitParameters init_parameters;
@@ -45,17 +47,21 @@ int main(int argc, char** argv) {
 
     // Open the camera
     auto returned_state = zed.open(init_parameters);
-    if (returned_state != ERROR_CODE::SUCCESS) {
+    if (returned_state != ERROR_CODE::SUCCESS)
+    {
         cout << "Error " << returned_state << ", exit program.\n";
         return EXIT_FAILURE;
     }
 
+    // step2：启用 3D 物体追踪
     // Define the Objects detection module parameters
     BodyTrackingParameters detection_parameters;
     // Different model can be chosen, optimizing the runtime or the accuracy
     detection_parameters.detection_model = BODY_TRACKING_MODEL::HUMAN_BODY_MEDIUM;
     // Body format
     detection_parameters.body_format = BODY_FORMAT::BODY_38;
+    // Run detection for every Camera grab
+    detection_parameters.image_sync = true;
     // track detects object across time and space
     detection_parameters.enable_tracking = true;
     // Optimize the person joints position, requires more computations
@@ -65,13 +71,17 @@ int main(int argc, char** argv) {
     if (detection_parameters.enable_tracking)
         zed.enablePositionalTracking();
 
+    // ps：第一次使用该模块时，模型将针对硬件进行优化，并且需要更多时间。此操作仅执行一次。
     cout << "Body Tracking: Loading Module..." << endl;
     returned_state = zed.enableBodyTracking(detection_parameters);
-    if (returned_state != ERROR_CODE::SUCCESS) {
+    if (returned_state != ERROR_CODE::SUCCESS)
+    {
         cout << "Error " << returned_state << ", exit program.\n";
         zed.close();
         return EXIT_FAILURE;
     }
+
+    // step3：捕获数据
     // detection runtime parameters
     BodyTrackingRuntimeParameters detection_parameters_rt;
     // For outdoor scene or long range, the confidence should be lowered to avoid missing detections (~20-30)
@@ -82,14 +92,18 @@ int main(int argc, char** argv) {
     cout << setprecision(3);
 
     int nb_detection = 0;
-    while (nb_detection < 100) {
+    while (nb_detection < 100)
+    {
 
-        if (zed.grab() == ERROR_CODE::SUCCESS) {
+        if (zed.grab() == ERROR_CODE::SUCCESS)
+        {
             zed.retrieveBodies(objects, detection_parameters_rt);
 
-            if (objects.is_new) {
+            if (objects.is_new)
+            {
                 cout << objects.body_list.size() << " Person(s) detected\n\n";
-                if (!objects.body_list.empty()) {
+                if (!objects.body_list.empty())
+                {
 
                     auto first_object = objects.body_list.front();
 
@@ -97,27 +111,27 @@ int main(int argc, char** argv) {
                     cout << " Confidence (" << first_object.confidence << "/100)\n";
 
                     if (detection_parameters.enable_tracking)
-                        cout << " Tracking ID: " << first_object.id << " tracking state: " <<
-                            first_object.tracking_state << " / " << first_object.action_state << "\n";
+                        cout << " Tracking ID: " << first_object.id << " tracking state: " << first_object.tracking_state << " / " << first_object.action_state << "\n";
 
-                    cout << " 3D position: " << first_object.position <<
-                            " Velocity: " << first_object.velocity << "\n";
+                    cout << " 3D position: " << first_object.position << " Velocity: " << first_object.velocity << "\n";
 
                     cout << " 3D dimensions: " << first_object.dimensions << "\n";
 
                     cout << " Keypoints 2D \n";
                     // The body part meaning can be obtained by casting the index into a BODY_PARTS
                     // to get the BODY_PARTS index the getIdx function is available
-                    for (int i = 0; i < first_object.keypoint_2d.size(); i++) {
+                    for (int i = 0; i < first_object.keypoint_2d.size(); i++)
+                    {
                         auto &kp = first_object.keypoint_2d[i];
                         cout << "    " << i << " " << kp.x << ", " << kp.y << "\n";
                     }
 
                     // The BODY_PARTS can be link as bones, using sl::BODY_BONES which gives the BODY_PARTS pair for each
                     cout << " Keypoints 3D \n";
-                    for (int i = 0; i < first_object.keypoint.size(); i++) {
+                    for (int i = 0; i < first_object.keypoint.size(); i++)
+                    {
                         auto &kp = first_object.keypoint[i];
-                        cout << "    " <<  i << " " << kp.x << ", " << kp.y << ", " << kp.z << "\n";
+                        cout << "    " << i << " " << kp.x << ", " << kp.y << ", " << kp.z << "\n";
                     }
 
                     cout << "\nPress 'Enter' to continue...\n";
@@ -127,6 +141,10 @@ int main(int argc, char** argv) {
             }
         }
     }
+
+    // step4：退出
+    zed.disableBodyTracking(); // 程序结束后，可以禁用模块并关闭摄像头。此步骤是可选的，因为zed.close()将负责禁用所有模块。如果需要，析构函数也会自动调用此函数。
     zed.close();
+    
     return EXIT_SUCCESS;
 }

@@ -73,7 +73,7 @@ void printSensorConfiguration(SensorParameters &sensor_parameters)
 
 int main(int argc, char **argv)
 {
-
+    // step1：打开相机
     // Create a ZED camera object.
     Camera zed;
 
@@ -111,10 +111,12 @@ int main(int argc, char **argv)
     printSensorConfiguration(info.sensors_configuration.magnetometer_parameters);
     printSensorConfiguration(info.sensors_configuration.barometer_parameters);
 
+    // step2：捕获传感器数据
     // Used to store sensors data.
     SensorsData sensors_data;
 
-    // Used to store sensors timestamps and check if new data is available.
+    // 使用一个基本类 TimestampHandler 来存储时间戳并检查数据更新
+    //  Used to store sensors timestamps and check if new data is available.
     TimestampHandler ts;
 
     // Retrieve sensors data during 5 seconds.
@@ -124,14 +126,14 @@ int main(int argc, char **argv)
 
     while (elapse_time < 5000)
     {
-
+        // step3：更新传感器数据
         // Depending on your camera model, different sensors are available.
         // They do not run at the same rate: therefore, to not miss any new samples we iterate as fast as possible
         // and compare timestamps to determine when a given sensor's data has been updated.
         // NOTE: There is no need to acquire images with grab(). getSensorsData runs in a separate internal capture thread.
         if (zed.getSensorsData(sensors_data, TIME_REFERENCE::CURRENT) == ERROR_CODE::SUCCESS)
         {
-
+            // 如果有新数据，我们会将其显示在控制台中：
             // Check if a new IMU sample is available. IMU is the sensor with the highest update frequency.
             if (ts.isNew(sensors_data.imu))
             {
@@ -148,6 +150,13 @@ int main(int argc, char **argv)
                 // Check if Barometer data has been updated.
                 if (ts.isNew(sensors_data.barometer))
                     cout << " - Barometer\n \t Atmospheric pressure:" << sensors_data.barometer.pressure << " [hPa]\n";
+
+                // 示例输出：
+                // Sample 2022
+                // - IMU:
+                //          Orientation: {0.0378747 0.00392148 0.00537387 0.99926}
+                //          Acceleration: {-0.119644 -9.73574 0.730032} [m/sec^2]
+                //          Angular Velocitiy: {0.0737072 0.0956493 0.0881631} [deg/sec]
             }
         }
 
@@ -155,6 +164,7 @@ int main(int argc, char **argv)
         elapse_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time).count();
     }
 
+    // step5：关闭相机
     // Close camera
     zed.close();
     return EXIT_SUCCESS;

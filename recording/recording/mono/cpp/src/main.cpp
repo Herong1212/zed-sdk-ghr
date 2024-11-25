@@ -86,7 +86,7 @@ int main(int argc, char **argv)
             // Each new frame is added to the SVO file
             rec_status = zed.getRecordingStatus();
             // printf(" NFrames SVO: %d  / %d\n", rec_status.number_frames_ingested, rec_status.number_frames_encoded);
-            printf(" NFrames SVO: %d  / %d\n", rec_status.number_frames_ingested, rec_status.number_frames_encoded); // ! 又是弃用的！
+            std::cout << " NFrames SVO: " << rec_status.number_frames_ingested << rec_status.number_frames_encoded << std::endl; // ! 又是弃用的！
         }
         else
             break;

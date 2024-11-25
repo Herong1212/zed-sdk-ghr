@@ -69,6 +69,10 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "filesystem": "cpp",
+        "*.ipp": "cpp",
+        "ios": "cpp",
+        "locale": "cpp"
     }
 }

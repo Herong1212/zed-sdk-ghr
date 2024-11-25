@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.5)
 project(Tutos)
 
 # 定义一个开关选项 BUILD_CPP，用于控制构建语言。ON 是默认值，表示默认构建 C++ 示例代码。

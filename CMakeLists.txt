@@ -18,6 +18,7 @@ endif()
 set(CMAKE_BUILD_TYPE "Release")
 
 set(SAMPLE_LIST "")
+
 # 体追踪相关功能，如多相机体追踪、导出 FBX 文件等
 add_subdirectory("body tracking/body tracking/${TYPE}")
 add_subdirectory("body tracking/export/fbx export/${TYPE}")

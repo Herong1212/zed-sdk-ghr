@@ -44,8 +44,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    // step2：启用位置
-    // 一旦打开相机，我们必须启用位置跟踪模块enablePositionalTracking()才能获取ZED的位置和方向。
+    // step2：启用位置 
+    // 一旦打开相机，我们必须启用位置跟踪模块 enablePositionalTracking() 才能获取ZED的位置和方向。
     // Enable positional tracking with default parameters
     PositionalTrackingParameters tracking_parameters;
     returned_state = zed.enablePositionalTracking(tracking_parameters);

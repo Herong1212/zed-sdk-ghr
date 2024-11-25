@@ -40,7 +40,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 link_directories(${ZED_LIBRARY_DIR})
 link_directories(${CUDA_LIBRARY_DIRS})
 
-ADD_EXECUTABLE(${PROJECT_NAME} include/utils.hpp src/main.cpp ${FBX_SRC})
+add_executable(${PROJECT_NAME} include/utils.hpp src/main.cpp ${FBX_SRC})
 
 if (LINK_SHARED_ZED)
 	SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})

@@ -7,7 +7,7 @@ SET(CMAKE_BUILD_TYPE "Release")
 
 option(LINK_SHARED_ZED "Link with the ZED SDK shared executable" ON)
 
-if (NOT LINK_SHARED_ZED AND MSVC)
+if(NOT LINK_SHARED_ZED AND MSVC)
     message(FATAL_ERROR "LINK_SHARED_ZED OFF : ZED SDK static libraries not available on Windows")
 endif()
 
@@ -26,7 +26,7 @@ link_directories(${OpenCV_LIBRARY_DIRS})
 
 ADD_EXECUTABLE(${PROJECT_NAME} include/utils.hpp src/main.cpp)
 
-if (LINK_SHARED_ZED)
+if(LINK_SHARED_ZED)
     SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
 else()
     SET(ZED_LIBS ${ZED_STATIC_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_LIBRARY})

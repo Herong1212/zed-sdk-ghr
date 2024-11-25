@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GL/gl.h>
-#include <GL/glut.h>   /* OpenGL Utility Toolkit header */
+#include <GL/glut.h> /* OpenGL Utility Toolkit header */
 
 #include <list>
 
@@ -16,7 +16,12 @@
 #define M_PI 3.141592653f
 #endif
 
-#define SAFE_DELETE( res ) if( res!=NULL )  { delete res; res = NULL; }
+#define SAFE_DELETE(res) \
+    if (res != NULL)     \
+    {                    \
+        delete res;      \
+        res = NULL;      \
+    }
 
 #if _WIN32
 #define MOUSE_R_SENSITIVITY 0.03f
@@ -27,14 +32,21 @@
 #endif
 #define MOUSE_UZ_SENSITIVITY 0.5f
 
-class CameraGL {
+class CameraGL
+{
 public:
-
-    CameraGL() {
+    CameraGL()
+    {
     }
 
-    enum DIRECTION {
-        UP, DOWN, LEFT, RIGHT, FORWARD, BACK
+    enum DIRECTION
+    {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+        FORWARD,
+        BACK
     };
 
     CameraGL(sl::Translation position, sl::Translation direction, sl::Translation vertical = sl::Translation(0, 1, 0));
@@ -42,7 +54,7 @@ public:
 
     void update();
     void setProjection(float horizontalFOV, float verticalFOV, float znear, float zfar);
-    const sl::Transform& getViewProjectionMatrix() const;
+    const sl::Transform &getViewProjectionMatrix() const;
 
     float getHorizontalFOV() const;
     float getVerticalFOV() const;
@@ -50,22 +62,22 @@ public:
     // Set an offset between the eye of the camera and its position
     // Note: Useful to use the camera as a trackball camera with z>0 and x = 0, y = 0
     // Note: coordinates are in local space
-    void setOffsetFromPosition(const sl::Translation& offset);
-    const sl::Translation& getOffsetFromPosition() const;
+    void setOffsetFromPosition(const sl::Translation &offset);
+    const sl::Translation &getOffsetFromPosition() const;
 
-    void setDirection(const sl::Translation& direction, const sl::Translation &vertical);
-    void translate(const sl::Translation& t);
-    void setPosition(const sl::Translation& p);
-    void rotate(const sl::Orientation& rot);
-    void rotate(const sl::Rotation& m);
-    void setRotation(const sl::Orientation& rot);
-    void setRotation(const sl::Rotation& m);
+    void setDirection(const sl::Translation &direction, const sl::Translation &vertical);
+    void translate(const sl::Translation &t);
+    void setPosition(const sl::Translation &p);
+    void rotate(const sl::Orientation &rot);
+    void rotate(const sl::Rotation &m);
+    void setRotation(const sl::Orientation &rot);
+    void setRotation(const sl::Rotation &m);
 
-    const sl::Translation& getPosition() const;
-    const sl::Translation& getForward() const;
-    const sl::Translation& getRight() const;
-    const sl::Translation& getUp() const;
-    const sl::Translation& getVertical() const;
+    const sl::Translation &getPosition() const;
+    const sl::Translation &getForward() const;
+    const sl::Translation &getRight() const;
+    const sl::Translation &getUp() const;
+    const sl::Translation &getVertical() const;
     float getZNear() const;
     float getZFar() const;
 
@@ -74,7 +86,7 @@ public:
     static const sl::Translation ORIGINAL_RIGHT;
 
     sl::Transform projection_;
-    //private:
+    // private:
     void updateVectors();
     void updateView();
     void updateVPMatrix();
@@ -96,38 +108,38 @@ public:
     float zfar_;
 };
 
-class Shader {
+class Shader
+{
 public:
-
     Shader() : verterxId_(0), fragmentId_(0), programId_(0) {}
-    Shader(const GLchar* vs, const GLchar* fs);
+    Shader(const GLchar *vs, const GLchar *fs);
     ~Shader();
 
     // Delete the move constructor and move assignment operator
-    Shader(Shader&&) = delete;
-    Shader& operator=(Shader&&) = delete;
+    Shader(Shader &&) = delete;
+    Shader &operator=(Shader &&) = delete;
 
     // Delete the copy constructor and copy assignment operator
-    Shader(const Shader&) = delete;
-    Shader& operator=(const Shader&) = delete;
+    Shader(const Shader &) = delete;
+    Shader &operator=(const Shader &) = delete;
 
-    void set(const GLchar* vs, const GLchar* fs);
+    void set(const GLchar *vs, const GLchar *fs);
     GLuint getProgramId();
 
     static const GLint ATTRIB_VERTICES_POS = 0;
     static const GLint ATTRIB_COLOR_POS = 1;
+
 private:
-    bool compile(GLuint &shaderId, GLenum type, const GLchar* src);
+    bool compile(GLuint &shaderId, GLenum type, const GLchar *src);
     GLuint verterxId_;
     GLuint fragmentId_;
     GLuint programId_;
 };
 
-class Simple3DObject {
+class Simple3DObject
+{
 public:
-
     Simple3DObject();
-
 
     ~Simple3DObject();
 
@@ -136,7 +148,8 @@ public:
     void pushToGPU();
     void clear();
 
-    void setStatic(bool _static) {
+    void setStatic(bool _static)
+    {
         isStatic_ = _static;
     }
 
@@ -156,7 +169,8 @@ private:
     GLuint vboID_[3];
 };
 
-class FpcObj {
+class FpcObj
+{
 public:
     FpcObj();
     ~FpcObj();
@@ -176,7 +190,8 @@ private:
     GLuint vboID_[2];
 };
 
-class MeshObject {
+class MeshObject
+{
 private:
     int current_fc;
     bool need_update;
@@ -190,27 +205,28 @@ private:
 public:
     MeshObject();
     ~MeshObject();
-    
+
     void add(std::vector<sl::float3> &vertices, std::vector<sl::uint3> &triangles, std::vector<sl::uchar3> &colors);
 
     void pushToGPU();
     void draw(bool draw_wire);
 };
 
-class PointCloud {
+class PointCloud
+{
 public:
     PointCloud();
     ~PointCloud();
 
     // Initialize Opengl and Cuda buffers
     // Warning: must be called in the Opengl thread
-    void initialize(sl::Mat&);
+    void initialize(sl::Mat &);
     // Push a new point cloud
     // Warning: can be called from any thread but the mutex "mutexData" must be locked
     void pushNewPC(CUstream);
     // Draw the point cloud
     // Warning: must be called in the Opengl thread
-    void draw(const sl::Transform& vp);
+    void draw(const sl::Transform &vp);
     // Close (disable update)
     void close();
 
@@ -220,23 +236,25 @@ private:
     Shader shader_;
     GLuint shMVPMatrixLoc_;
     size_t numBytes_;
-    float* xyzrgbaMappedBuf_;
+    float *xyzrgbaMappedBuf_;
     GLuint bufferGLID_;
-    cudaGraphicsResource* bufferCudaID_;
+    cudaGraphicsResource *bufferCudaID_;
 };
 
-struct ShaderObj {
+struct ShaderObj
+{
     Shader it;
     GLuint MVPM;
 };
 
-class CameraViewer {
+class CameraViewer
+{
 public:
     CameraViewer();
     ~CameraViewer();
 
     // Initialize Opengl and Cuda buffers
-    bool initialize(sl::Mat& image);
+    bool initialize(sl::Mat &image);
     // Push a new Image + Z buffer and transform into a point cloud
     void pushNewImage(CUstream);
     // Draw the Image
@@ -245,10 +263,11 @@ public:
     void close();
 
     Simple3DObject frustum;
+
 private:
     sl::Mat ref;
-	cudaArray_t ArrIm;
-    cudaGraphicsResource* cuda_gl_ressource;//cuda GL resource
+    cudaArray_t ArrIm;
+    cudaGraphicsResource *cuda_gl_ressource; // cuda GL resource
     Shader shader;
     GLuint shMVPMatrixLocTex_;
 
@@ -259,12 +278,12 @@ private:
     std::vector<sl::uint3> faces;
     std::vector<sl::float3> vert;
     std::vector<sl::float2> uv;
-
 };
 
 // This class manages input events, window and Opengl rendering pipeline
 
-class GLViewer {
+class GLViewer
+{
 public:
     GLViewer();
     ~GLViewer();
@@ -289,7 +308,7 @@ private:
     // Clear and refresh inputs' data
     void clearInputs();
 
-    static GLViewer* currentInstance_;
+    static GLViewer *currentInstance_;
 
     // Glut functions callbacks
     static void drawCallback();
@@ -302,7 +321,8 @@ private:
 
     bool available;
 
-    enum MOUSE_BUTTON {
+    enum MOUSE_BUTTON
+    {
         LEFT = 0,
         MIDDLE = 1,
         RIGHT = 2,
@@ -310,7 +330,8 @@ private:
         WHEEL_DOWN = 4
     };
 
-    enum KEY_STATE {
+    enum KEY_STATE
+    {
         UP = 'u',
         DOWN = 'd',
         FREE = 'f'

@@ -1,4 +1,4 @@
-#include "GLViewer.hpp"
+#include "../include/GLViewer.hpp"
 
 const GLchar *MESH_VERTEX_SHADER =
     "#version 330 core\n"

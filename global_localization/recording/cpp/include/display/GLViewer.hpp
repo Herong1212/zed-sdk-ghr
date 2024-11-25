@@ -7,10 +7,10 @@
 #include <GL/freeglut.h>
 
 #include <math.h>
-#include <thread>         // std::thread
-#include <mutex>          // std::mutex
+#include <thread> // std::thread
+#include <mutex>  // std::mutex
 
-#include "ZEDModel.hpp"    /* OpenGL Utility Toolkit header */
+#include "ZEDModel.hpp" /* OpenGL Utility Toolkit header */
 #include <sl/Camera.hpp>
 #include <sl/Fusion.hpp>
 
@@ -18,40 +18,43 @@
 #define M_PI 3.1416f
 #endif
 
-#define SAFE_DELETE( res ) if( res!=NULL )  { delete res; res = NULL; }
+#define SAFE_DELETE(res) \
+    if (res != NULL)     \
+    {                    \
+        delete res;      \
+        res = NULL;      \
+    }
 
 #define MOUSE_R_SENSITIVITY 0.005f
 #define MOUSE_WHEEL_SENSITIVITY 0.065f
 #define MOUSE_T_SENSITIVITY 0.01f
 #define KEY_T_SENSITIVITY 0.01f
 
-
-
 //// UTILS //////
 using namespace std;
-void print(std::string msg_prefix, sl::ERROR_CODE err_code = sl::ERROR_CODE::SUCCESS, std::string msg_suffix = "") ;
+void print(std::string msg_prefix, sl::ERROR_CODE err_code = sl::ERROR_CODE::SUCCESS, std::string msg_suffix = "");
 
 /////////////////
-class CameraGL {
+class CameraGL
+{
 public:
-
     CameraGL();
     ~CameraGL();
 
     void update();
     void setProjection(float im_ratio);
-    const sl::Transform& getViewProjectionMatrix() const;
+    const sl::Transform &getViewProjectionMatrix() const;
 
-    void setDirection(const sl::Translation& direction, const sl::Translation &vertical);
-    void translate(const sl::Translation& t);
-    void setPosition(const sl::Translation& p);
-    void rotate(const sl::Rotation& m);
-    void setRotation(const sl::Rotation& m);
+    void setDirection(const sl::Translation &direction, const sl::Translation &vertical);
+    void translate(const sl::Translation &t);
+    void setPosition(const sl::Translation &p);
+    void rotate(const sl::Rotation &m);
+    void setRotation(const sl::Rotation &m);
 
-    const sl::Translation& getForward() const;
-    const sl::Translation& getRight() const;
-    const sl::Translation& getUp() const;
-    const sl::Translation& getVertical() const;
+    const sl::Translation &getForward() const;
+    const sl::Translation &getRight() const;
+    const sl::Translation &getUp() const;
+    const sl::Translation &getVertical() const;
 
 private:
     static const sl::Translation ORIGINAL_FORWARD;
@@ -74,37 +77,37 @@ private:
     const float horizontalFOV;
 };
 
-
-class Shader {
+class Shader
+{
 public:
-
     Shader() : verterxId_(0), fragmentId_(0), programId_(0) {}
-    Shader(const GLchar* vs, const GLchar* fs);
+    Shader(const GLchar *vs, const GLchar *fs);
     ~Shader();
 
     // Delete the move constructor and move assignment operator
-    Shader(Shader&&) = delete;
-    Shader& operator=(Shader&&) = delete;
+    Shader(Shader &&) = delete;
+    Shader &operator=(Shader &&) = delete;
 
     // Delete the copy constructor and copy assignment operator
-    Shader(const Shader&) = delete;
-    Shader& operator=(const Shader&) = delete;
+    Shader(const Shader &) = delete;
+    Shader &operator=(const Shader &) = delete;
 
-    void set(const GLchar* vs, const GLchar* fs);
+    void set(const GLchar *vs, const GLchar *fs);
     GLuint getProgramId();
 
     static const GLint ATTRIB_VERTICES_POS = 0;
     static const GLint ATTRIB_COLOR_POS = 1;
+
 private:
-    bool compile(GLuint &shaderId, GLenum type, const GLchar* src);
+    bool compile(GLuint &shaderId, GLenum type, const GLchar *src);
     GLuint verterxId_;
     GLuint fragmentId_;
     GLuint programId_;
 };
 
-class Simple3DObject {
+class Simple3DObject
+{
 public:
-
     Simple3DObject();
     Simple3DObject(sl::Translation position, bool isStatic);
     ~Simple3DObject();
@@ -119,19 +122,20 @@ public:
 
     void draw();
 
-    void translate(const sl::Translation& t);
-    void setPosition(const sl::Translation& p);
+    void translate(const sl::Translation &t);
+    void setPosition(const sl::Translation &p);
 
-    void setRT(const sl::Transform& mRT);
+    void setRT(const sl::Transform &mRT);
 
-    void rotate(const sl::Orientation& rot);
-    void rotate(const sl::Rotation& m);
-    void setRotation(const sl::Orientation& rot);
-    void setRotation(const sl::Rotation& m);
+    void rotate(const sl::Orientation &rot);
+    void rotate(const sl::Rotation &m);
+    void setRotation(const sl::Orientation &rot);
+    void setRotation(const sl::Rotation &m);
 
-    const sl::Translation& getPosition() const;
+    const sl::Translation &getPosition() const;
 
     sl::Transform getModelMatrix() const;
+
 private:
     std::vector<float> vertices_;
     std::vector<float> colors_;
@@ -152,23 +156,24 @@ private:
 
     sl::Translation position_;
     sl::Orientation rotation_;
-
 };
 
-struct ShaderData {
+struct ShaderData
+{
     Shader it;
     GLuint MVP_Mat;
 };
 
 // This class manages input events, window and Opengl rendering pipeline
-class GLViewer {
+class GLViewer
+{
 public:
     GLViewer();
     ~GLViewer();
     void exit();
     bool isAvailable();
     void init(int argc, char **argv);
-    void updateData(sl::Transform zed_rt, sl::FusedPositionalTrackingStatus state);
+    void updateData(sl::Transform zed_rt, sl::POSITIONAL_TRACKING_STATE state);
 
 private:
     // Rendering loop method called each frame by glutDisplayFunc
@@ -181,7 +186,7 @@ private:
     void clearInputs();
 
     void printText();
-    
+
     // Glut functions callbacks
     static void drawCallback();
     static void mouseButtonCallback(int button, int state, int x, int y);
@@ -193,7 +198,8 @@ private:
 
     bool available;
 
-    enum MOUSE_BUTTON {
+    enum MOUSE_BUTTON
+    {
         LEFT = 0,
         MIDDLE = 1,
         RIGHT = 2,
@@ -201,7 +207,8 @@ private:
         WHEEL_DOWN = 4
     };
 
-    enum KEY_STATE {
+    enum KEY_STATE
+    {
         UP = 'u',
         DOWN = 'd',
         FREE = 'f'
@@ -213,7 +220,7 @@ private:
     int mouseMotion_[2];
     int previousMouseMotion_[2];
     KEY_STATE keyStates_[256];
-    
+
     Simple3DObject floor_grid;
     Simple3DObject zedModel;
     Simple3DObject zedPath;
@@ -224,7 +231,7 @@ private:
 
     std::string txtR;
     std::string txtT;
-    sl::FusedPositionalTrackingStatus trackState;
+    sl::POSITIONAL_TRACKING_STATE trackState;
     const std::string str_tracking = "POSITIONAL TRACKING : ";
 
     sl::float3 bckgrnd_clr;

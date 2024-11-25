@@ -1,6 +1,7 @@
-#include "display/GenericDisplay.h"
-#include "exporter/KMLExporter.h"
-
+// #include "display/GenericDisplay.h"
+#include "../../include/display/GenericDisplay.h"
+// #include "exporter/KMLExporter.h"
+#include "../../include/exporter/KMLExporter.h"
 
 GenericDisplay::GenericDisplay()
 {
@@ -16,12 +17,14 @@ void GenericDisplay::init(int argc, char **argv)
     opengl_viewer.init(argc, argv);
 }
 
-void GenericDisplay::updatePoseData(sl::Transform zed_rt, sl::FusedPositionalTrackingStatus state)
+// void GenericDisplay::updatePoseData(sl::Transform zed_rt, sl::FusedPositionalTrackingStatus state)
+void GenericDisplay::updatePoseData(sl::Transform zed_rt, sl::POSITIONAL_TRACKING_STATE state) // ! 应该是用的这个吧，全局变量
 {
     opengl_viewer.updateData(zed_rt, state);
 }
 
-bool GenericDisplay::isAvailable(){
+bool GenericDisplay::isAvailable()
+{
     return opengl_viewer.isAvailable();
 }
 
@@ -32,7 +35,7 @@ void GenericDisplay::updateRawGeoPoseData(sl::GNSSData geo_data)
 
     // Make the pose available for the Live Server
     ofstream data;
-    data.open ("../../../map server/raw_data.txt");
+    data.open("../../../map server/raw_data.txt");
     data << std::fixed << std::setprecision(17);
     data << std::fixed << std::setprecision(17);
     data << latitude;
@@ -47,7 +50,10 @@ void GenericDisplay::updateRawGeoPoseData(sl::GNSSData geo_data)
     data << ",";
     data << geo_data.altitude_std;
     data << ",";
-    data << geo_data.gnss_status;
+
+    // ! 这个不知道改成什么了？先注释了吧~
+    // data << geo_data.gnss_status;
+
     data.flush(); // flush will do the same thing than "\n" but without additional character
     data.close();
 }
@@ -56,7 +62,7 @@ void GenericDisplay::updateGeoPoseData(sl::GeoPose geo_pose)
 {
     // Make the pose available for the Live Server
     ofstream data;
-    data.open ("../../../map server/data.txt");
+    data.open("../../../map server/data.txt");
     data << std::fixed << std::setprecision(17);
     data << geo_pose.latlng_coordinates.getLatitude(false);
     data << ",";

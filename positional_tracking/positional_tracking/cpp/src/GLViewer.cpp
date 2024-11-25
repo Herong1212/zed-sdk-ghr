@@ -311,7 +311,7 @@ static void safe_glutBitmapString(void *font, const char *str)
         glutBitmapCharacter(font, str[x]);
 }
 
-//! 这个垃圾文件，出了很多问题
+// ! 这个垃圾文件，出了很多问题
 void GLViewer::printText()
 {
     // 1. 设置投影模式 (glMatrixMode(GL_PROJECTION))

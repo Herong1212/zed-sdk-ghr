@@ -65,7 +65,7 @@ add_subdirectory("recording/export/svo/${TYPE}")
 add_subdirectory("recording/playback/mono/${TYPE}")
 add_subdirectory("recording/playback/multi_camera/${TYPE}")
 add_subdirectory("recording/recording/multi_camera/${TYPE}")
-add_subdirectory("recording/recording/mono/${TYPE}")
+# add_subdirectory("recording/recording/mono/${TYPE}")
 
 # 示例教程
 add_subdirectory("tutorials")

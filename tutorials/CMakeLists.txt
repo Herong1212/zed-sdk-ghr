@@ -18,6 +18,7 @@ add_subdirectory("tutorial-5-spatial_mapping/${TYPE}")
 add_subdirectory("tutorial-6-object_detection/${TYPE}")
 add_subdirectory("tutorial-7-sensor_data/${TYPE}")
 add_subdirectory("tutorial-8-body_tracking/${TYPE}")
+add_subdirectory("tutorial-10-calibration")
 
 # 只有当 BUILD_CPP=ON 时，才会添加 tutorial-9-global_localization 模块到构建系统中。
 if(${BUILD_CPP})
